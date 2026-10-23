@@ -20,6 +20,7 @@ import { toastAlert } from "../../../utils/SweetAlert";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const ViewCms = () => {
   const isSlider = useSlider();
@@ -89,8 +90,7 @@ const ViewCms = () => {
                         <img
                           src={
                             viewCms?.image
-                              ? import.meta.env.VITE_API_URL +
-                                `/getImg/${viewCms?.image}`
+                              ? mediaUrl(viewCms?.image)
                               : "/static_image.jpg"
                           }
                           alt="Profile"

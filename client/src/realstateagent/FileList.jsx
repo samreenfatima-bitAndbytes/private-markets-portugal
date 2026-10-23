@@ -92,7 +92,11 @@ const FileList = () => {
       const resp = await customerOrderDownload(orderMongoId);
       const filePath = resp?.data?.data;
       if (resp?.status === 200 && filePath) {
-        window.location.assign(`${import.meta.env.VITE_API_URL}/${filePath}`);
+        const url =
+          String(filePath).startsWith("/") || String(filePath).startsWith("http")
+            ? filePath
+            : `/${filePath}`;
+        window.location.assign(url);
         toastAlert("success", t("FILE_DOWNLOAD_TOAST"));
       } else {
         toastAlert("error", resp?.data?.message || "Download failed");
@@ -113,7 +117,7 @@ const FileList = () => {
             <Col lg={3}>
               <UserSidebar />
             </Col>
-            <Col lg={9}>
+            <Col lg={9} className="min-w-0">
               <div className="emp-dash-card sidebox">
                 <div className="emp-das-hd mb-2">
                   <h4 className="emp-dash-title">

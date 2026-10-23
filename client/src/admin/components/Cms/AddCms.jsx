@@ -26,6 +26,7 @@ import { toastAlert } from "../../../utils/SweetAlert";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const AddCms = () => {
   const { id } = useParams();
@@ -257,8 +258,7 @@ const AddCms = () => {
                                 values.newPicked
                                   ? URL.createObjectURL(values.newPicked)
                                   : values.image
-                                  ? import.meta.env.VITE_API_URL +
-                                    `/getImg/${values?.image}`
+                                  ? mediaUrl(values?.image)
                                   : "/static_image.jpg"
                               }
                               width="20px"

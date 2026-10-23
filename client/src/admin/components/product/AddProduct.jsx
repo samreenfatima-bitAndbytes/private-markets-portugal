@@ -25,6 +25,7 @@ import AdminFooter from "../AdminFooter";
 import { constant } from "../../../utils/constant";
 import { toastAlert } from "../../../utils/SweetAlert";
 import { restrictAlpha } from "../../../utils/Functions";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const AddProduct = () => {
   const { id } = useParams();
@@ -355,8 +356,7 @@ const AddProduct = () => {
                                       className="img-fluid2"
                                       src={
                                         file
-                                          ? import.meta.env.VITE_API_URL +
-                                            `/getImg/${file}`
+                                          ? mediaUrl(file)
                                           : "/static_image.jpg"
                                       }
                                       width="100px"

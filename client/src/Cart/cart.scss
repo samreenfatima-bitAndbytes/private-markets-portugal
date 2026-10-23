@@ -95,6 +95,100 @@ p {
     }
 }
 
+.cart-page {
+  .cart-page__head {
+    margin-bottom: 0.5rem;
+  }
+
+  .cart-page__sub {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .cart-card {
+    height: 100%;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e6ebf2;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(5, 19, 37, 0.06);
+    overflow: hidden;
+  }
+
+  .cart-card__media {
+    position: relative;
+    flex: 0 0 148px;
+    height: 148px;
+    max-height: 148px;
+    background: #f3f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      max-width: 72%;
+      max-height: 72%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+  }
+
+  .cart-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    background: rgba(0, 74, 173, 0.92);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .cart-card__body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .cart-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #051325;
+    margin: 0 0 4px;
+    line-height: 1.35;
+  }
+
+  .cart-card__subtitle {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0 0 8px;
+    line-height: 1.35;
+  }
+
+  .cart-card__price {
+    color: #004aad;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  .cart-summary {
+    position: sticky;
+    top: 90px;
+  }
+}
+
 .product-shop {
   .product-shop-head {
     display: flex;
@@ -114,6 +208,34 @@ p {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    align-items: center;
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px !important;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0 1.15rem;
+      line-height: 1.2;
+    }
+
+    .btn-outline-primary,
+    a.btn-outline-primary {
+      border: 1px solid #004aad !important;
+      color: #004aad !important;
+      background: #fff !important;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: #004aad !important;
+        border-color: #004aad !important;
+        color: #fff !important;
+      }
+    }
   }
 
   .product-card {

@@ -11,7 +11,6 @@ import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import Chart from "react-google-charts";
 import { FaBoxOpen, FaCreditCard, FaEnvira, FaUsers } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useSlider from "../../hooks/useSlider";
@@ -22,12 +21,16 @@ import {
 import CustomSelect from "../../components/CustomSelect";
 import AdminFooter from "../components/AdminFooter";
 import Sidebar from "../sidebar/Sidebar";
+import DashboardChart from "./DashboardChart";
 
 const Dashboard = () => {
   const isSlider = useSlider();
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState(moment().format("YYYY"));
   const [dashboard, setDashboard] = useState([]);
+  const [isNarrow, setIsNarrow] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
 
   const dashboardCount = useQuery({
     queryKey: ["dashboardCount"],
@@ -41,15 +44,18 @@ const Dashboard = () => {
     getGraphCounts(selectedYear);
   }, [selectedYear]);
 
-  const getGraphCounts = async (selectedYear) => {
+  useEffect(() => {
+    const onResize = () => setIsNarrow(window.innerWidth < 768);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const getGraphCounts = async (year) => {
     try {
-      const response = await adminGraphData(selectedYear);
+      const response = await adminGraphData(year);
       if (response?.status === 200) {
-        setDashboard(
-          response?.data?.data?.map((data) => {
-            return data;
-          })
-        );
+        setDashboard(response?.data?.data?.map((row) => row) ?? []);
       }
     } catch (error) {
       console.error(error);
@@ -64,8 +70,6 @@ const Dashboard = () => {
     value: String(year),
     label: String(year),
   }));
-  const headerData = ["Months", "Registered Users", "Cms", "Order", "Payment"];
-  const data = [headerData, ...dashboard];
 
   return (
     <div className="mainbox">
@@ -154,12 +158,9 @@ const Dashboard = () => {
                 />
               </Col>
               <Col xl={12}>
-                <Chart
-                  chartType="Bar"
-                  width="100%"
-                  height="600px"
-                  data={data}
-                />
+                <div className="dashboard-chart">
+                  <DashboardChart rows={dashboard} narrow={isNarrow} />
+                </div>
               </Col>
             </Row>
           </div>

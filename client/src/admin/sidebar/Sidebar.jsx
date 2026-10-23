@@ -7,22 +7,61 @@ Proprietary and confidential :  All information contained here in is, and remain
 the property of Hotopics Unipessoal Lda. and it's partners.
 Unauthorized copying of this file, via any medium is strictly prohibited.
 */
-import React from "react";
+import React, { useEffect } from "react";
 import { NavbarBrand } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import useSlider from "../../hooks/useSlider";
+import { slider } from "../../redux/features/sliderSlice";
 import AdminHeader from "../components/AdminHeader";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
 import "./sidebar.scss";
 
+const MOBILE_BP = 991;
+
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
   const isSlider = useSlider();
+  const isDrawerOpen = !isSlider;
+
+  useEffect(() => {
+    let wasMobile = window.innerWidth <= MOBILE_BP;
+    if (wasMobile) {
+      dispatch(slider(true));
+    }
+
+    const onResize = () => {
+      const isMobile = window.innerWidth <= MOBILE_BP;
+      if (isMobile && !wasMobile) {
+        dispatch(slider(true));
+      }
+      wasMobile = isMobile;
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (window.innerWidth <= MOBILE_BP) {
+      dispatch(slider(true));
+    }
+  }, [location.pathname, dispatch]);
 
   return (
     <>
       <AdminHeader />
+      {isDrawerOpen && (
+        <button
+          type="button"
+          className="admin-sidebar-backdrop d-lg-none"
+          aria-label="Close menu"
+          onClick={() => dispatch(slider(true))}
+        />
+      )}
       <div className={isSlider ? "sidebarmain close" : "sidebarmain open"}>
         <>
           <NavbarBrand

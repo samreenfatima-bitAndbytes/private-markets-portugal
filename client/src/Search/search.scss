@@ -333,10 +333,13 @@ p {
 
   .csvimg {
     width: 140px;
+    max-width: 40%;
   }
 
   .modal-dialog {
-    min-width: 615px;
+    min-width: 0;
+    max-width: min(615px, calc(100vw - 1.5rem));
+    width: 100%;
   }
 }
 

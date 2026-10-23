@@ -8,6 +8,7 @@ the property of Hotopics Unipessoal Lda. and it's partners.
 Unauthorized copying of this file, via any medium is strictly prohibited.
 */
 import { React, useEffect, useState } from "react";
+import { mediaUrl } from "../utils/mediaUrl";
 import {
   Modal,
   Tab,
@@ -202,8 +203,7 @@ function Profile() {
                             <img
                               src={
                                 data?.profileImgId
-                                  ? import.meta.env.VITE_API_URL +
-                                    `/getImg/${data?.profileImgId}`
+                                  ? mediaUrl(data?.profileImgId)
                                   : "/default.png"
                               }
                               alt="Image"

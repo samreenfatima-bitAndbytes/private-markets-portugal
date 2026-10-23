@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128">
+  <defs>
+    <clipPath id="c"><circle cx="64" cy="64" r="64"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="128" height="128" fill="#004aad"/>
+    <circle cx="64" cy="64" r="64" fill="#004aad" opacity="0.9"/>
+    <!-- shoulders -->
+    <ellipse cx="64" cy="128" rx="48" ry="36" fill="#004aad" opacity="0.55"/>
+    <ellipse cx="64" cy="130" rx="44" ry="30" fill="#ffffff" opacity="0.2"/>
+    
+        <ellipse cx="64" cy="42" rx="36" ry="28" fill="#1a120c"/>
+        
+    <!-- face -->
+    <ellipse cx="64" cy="72" rx="28" ry="32" fill="#d7a88c"/>
+    <!-- eyes -->
+    <circle cx="54" cy="70" r="2.6" fill="#2c1810"/>
+    <circle cx="74" cy="70" r="2.6" fill="#2c1810"/>
+    <!-- smile -->
+    <path d="M56 82 Q64 88 72 82" stroke="#a66" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <circle cx="64" cy="64" r="62" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.35"/>
+</svg>

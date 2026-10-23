@@ -95,7 +95,7 @@ function Notification() {
                     >
                       <path
                         d="M1 1H118"
-                        stroke="#004AAD"
+                        stroke="#004aad"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
@@ -126,7 +126,7 @@ function Notification() {
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
                             >
-                              <circle cx="25" cy="25" r="25" fill="#004AAD" />
+                              <circle cx="25" cy="25" r="25" fill="#004aad" />
                               <g clip-path="url(#clip0_119_770)">
                                 <path
                                   d="M25.5001 36C26.7589 36 27.843 35.2396 28.3186 34.1543H22.6815C23.1572 35.2396 24.2413 36 25.5001 36Z"

@@ -104,7 +104,7 @@ const ChangePassword = () => {
                     >
                       <path
                         d="M1 1H118"
-                        stroke="#004AAD"
+                        stroke="#004aad"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />

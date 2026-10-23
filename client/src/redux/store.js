@@ -20,7 +20,7 @@ const store = configureStore({
   reducer: {
     auth: persistReducer(
       {
-        key: "auth",
+        key: "auth_v2",
         storage,
       },
       authSlice

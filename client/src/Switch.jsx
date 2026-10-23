@@ -44,7 +44,7 @@ border:0;
     }
 
     &.on {
-      background: #004AAD;
+      background: #004aad;
       span {
         left: 100%;
         margin-left: -33px;

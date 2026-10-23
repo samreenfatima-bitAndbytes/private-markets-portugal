@@ -19,11 +19,11 @@ import prTranslation from './locales/Portuguese.json';
 import i18n from 'i18next'; 
 import ReactGA from 'react-ga4';
 
-// Initialize Google Analytics
-ReactGA.initialize(`${import.meta.env.VITE_GA_MEASUREMENT_ID}`);
-
-// Send initial pageview
-ReactGA.send('pageview');
+const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+if (gaId && String(gaId).startsWith("G-")) {
+  ReactGA.initialize(gaId);
+  ReactGA.send("pageview");
+}
 
 i18n
   .use(LanguageDetector)

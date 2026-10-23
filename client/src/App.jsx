@@ -36,7 +36,13 @@ const usePageTracking = () => {
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search });
+    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (gaId && String(gaId).startsWith("G-")) {
+      ReactGA.send({
+        hitType: "pageview",
+        page: location.pathname + location.search,
+      });
+    }
   }, [location]);
 };
 

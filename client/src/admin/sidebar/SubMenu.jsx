@@ -11,6 +11,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useSlider from "../../hooks/useSlider";
 
+const MOBILE_BP = 991;
+
 /** Related detail/edit routes that should keep the list item active. */
 const RELATED_PREFIXES = {
   "/admin/dashboard": ["/admin/dashboard"],
@@ -45,12 +47,14 @@ const SubMenu = ({ item }) => {
   const slider = useSlider();
   const location = useLocation();
   const pathname = location.pathname;
+  const [isMobile, setIsMobile] = useState(
+    () =>
+      typeof window !== "undefined" && window.innerWidth <= MOBILE_BP
+  );
 
   const childActive = useMemo(
     () =>
-      Boolean(
-        item?.subNav?.some((sub) => isPathActive(pathname, sub.path))
-      ),
+      Boolean(item?.subNav?.some((sub) => isPathActive(pathname, sub.path))),
     [item?.subNav, pathname]
   );
 
@@ -60,15 +64,35 @@ const SubMenu = ({ item }) => {
   const [subnav, setSubnav] = useState(childActive);
   const [addClass, setAddClass] = useState("");
 
+  /** Desktop collapsed rail uses hover flyouts; mobile drawer uses accordion. */
+  const flyoutMode = Boolean(slider && !isMobile);
+  const accordionMode = !slider || isMobile;
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= MOBILE_BP);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   useEffect(() => {
     if (childActive) {
       setSubnav(true);
     }
   }, [childActive, pathname]);
 
+  /* Hide flyout content while mobile drawer is closed */
+  useEffect(() => {
+    if (isMobile && slider) {
+      setSubnav(false);
+      setAddClass("");
+    } else if (childActive) {
+      setSubnav(true);
+    }
+  }, [isMobile, slider, childActive]);
+
   const linkClassName = [
     "sidebar-link",
-    slider && addClass ? addClass : "",
+    flyoutMode && addClass ? addClass : "",
     sectionActive ? "active" : "",
   ]
     .filter(Boolean)
@@ -78,23 +102,21 @@ const SubMenu = ({ item }) => {
     <>
       <Link
         onMouseEnter={() => {
+          if (!flyoutMode) return;
           setAddClass("nav-hover");
-          if (slider) {
-            setSubnav(true);
-          }
+          setSubnav(true);
         }}
         onMouseLeave={() => {
+          if (!flyoutMode) return;
           setAddClass("");
-          if (slider && !childActive) {
-            setSubnav(false);
-          }
+          if (!childActive) setSubnav(false);
         }}
         to={item.path || "#"}
         onClick={(e) => {
           if (!item.path && item.subNav) {
             e.preventDefault();
           }
-          if (!slider && item.subNav) {
+          if (accordionMode && item.subNav) {
             setSubnav((open) => (childActive ? true : !open));
           }
         }}
@@ -114,18 +136,16 @@ const SubMenu = ({ item }) => {
         </span>
       </Link>
       <div
-        className={`subnav${childActive ? " subnav--open" : ""}`}
+        className={`subnav${childActive || subnav ? " subnav--open" : ""}`}
         onMouseEnter={() => {
+          if (!flyoutMode) return;
           setAddClass("nav-hover");
-          if (slider) {
-            setSubnav(true);
-          }
+          setSubnav(true);
         }}
         onMouseLeave={() => {
+          if (!flyoutMode) return;
           setAddClass("");
-          if (slider && !childActive) {
-            setSubnav(false);
-          }
+          if (!childActive) setSubnav(false);
         }}
       >
         {subnav &&

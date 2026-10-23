@@ -283,7 +283,8 @@ function Home() {
             {!featuredLoading && featured.length === 0 && (
               <Col xs={12}>
                 <p className="text-muted mb-0">
-                  No listings yet. Run <code>npm run seed</code> on the server.
+                  No listings yet. Refresh the page or clear site data to
+                  re-seed the demo.
                 </p>
               </Col>
             )}

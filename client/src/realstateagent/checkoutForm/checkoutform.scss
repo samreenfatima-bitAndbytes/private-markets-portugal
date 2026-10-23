@@ -294,10 +294,27 @@ p {
   }
 }
 
+.payment-card-shell {
+  cursor: pointer;
+  border: 1px solid #e6ebf2;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &.is-selected {
+    border-color: #004aad;
+    box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #004aad;
+    outline-offset: 2px;
+  }
+}
+
 .radio-inner {
   width: 18px;
   height: 18px;
   cursor: pointer;
+  accent-color: #004aad;
 }
 
 .chck-label {

@@ -17,6 +17,7 @@ import Header from "../components/Header";
 import { staticPages } from "../services/Services";
 import { constant } from "../utils/constant";
 import "./about.scss";
+import { mediaUrl } from "../utils/mediaUrl";
 
 function About() {
   const { t } = useTranslation();
@@ -110,8 +111,7 @@ function About() {
                   <img
                     src={
                       aboutUsQuery?.image
-                        ? import.meta.env.VITE_API_URL +
-                          `/getImg/${aboutUsQuery?.image}`
+                        ? mediaUrl(aboutUsQuery?.image)
                         : "/about-us.jpg"
                     }
                     className="about-img"

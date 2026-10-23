@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { mediaUrl } from "../utils/mediaUrl";
 import {
   FaBell,
   FaBookmark,
@@ -182,7 +183,7 @@ const UserSidebar = () => {
         <img
           src={
             data?.profileImgId
-              ? import.meta.env.VITE_API_URL + `/getImg/${data?.profileImgId}`
+              ? mediaUrl(data?.profileImgId)
               : "/default.png"
           }
           alt=""

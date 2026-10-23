@@ -200,18 +200,18 @@ const PropertyList = () => {
       <div className="mainbox">
         <Sidebar />
         <div className={isSlider ? "body-content close" : "body-content open"}>
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <h2 className="mainhead mb-0">
+          <div className="admin-toolbar">
+            <h2 className="mainhead">
               <Link to="/admin/dashboard" className="bread_color">
                 Home
               </Link>{" "}
               / Property
             </h2>
-            <div className="d-flex gap-2 mt-4">
-              <a className="theme-btn btn-md mb-2 " href="/sample.csv" download>
+            <div className="admin-toolbar__actions">
+              <a className="theme-btn btn-md" href="/sample.csv" download>
                 Download Sample File
               </a>
-              <label htmlFor="csvUpload" className="theme-btn btn-md mb-2">
+              <label htmlFor="csvUpload" className="theme-btn btn-md mb-0">
                 Import Csv
                 <input
                   type="file"
@@ -389,7 +389,7 @@ const PropertyList = () => {
               >
                 <path
                   d="M1 1L158 0.999986"
-                  stroke="#004AAD"
+                  stroke="#004aad"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />

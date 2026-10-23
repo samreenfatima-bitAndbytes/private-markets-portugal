@@ -21,6 +21,7 @@ import CommonFooter from "../components/CommonFooter";
 import Loader from "../Loader/Loader";
 import Footer from "../components/Footer";
 import { toastAlert } from "../utils/SweetAlert";
+import { mediaUrl } from "../utils/mediaUrl";
 
 const ProductListWithoutAuth = () => {
   const { t } = useTranslation();
@@ -73,8 +74,7 @@ const ProductListWithoutAuth = () => {
                                     className="w-100"
                                     src={
                                       data?.productImg?.[0]
-                                        ? import.meta.env.VITE_API_URL +
-                                          `/getImg/${data?.productImg?.[0]}`
+                                        ? mediaUrl(data?.productImg?.[0])
                                         : "/static_image.jpg"
                                     }
                                     width="200px"

@@ -22,6 +22,7 @@ import { toastAlert } from "../../../utils/SweetAlert";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const UserView = () => {
   const isSlider = useSlider();
@@ -79,8 +80,7 @@ const UserView = () => {
                       <img
                         src={
                           userView?.profileImgId
-                            ? import.meta.env.VITE_API_URL +
-                              `/getImg/${userView?.profileImgId}`
+                            ? mediaUrl(userView?.profileImgId)
                             : "/default.png"
                         }
                         alt="Profile"

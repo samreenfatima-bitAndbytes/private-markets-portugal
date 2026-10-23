@@ -106,7 +106,7 @@ function Settings() {
                   <h4 className="emp-dash-title">Settings
                     <br />
                     <svg width="119" height="2" viewBox="0 0 119 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1H118" stroke="#004AAD" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M1 1H118" stroke="#004aad" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </h4>
                 </div>

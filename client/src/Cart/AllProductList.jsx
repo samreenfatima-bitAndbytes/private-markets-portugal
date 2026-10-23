@@ -20,6 +20,7 @@ import Header from "../components/Header";
 import { useDebounceEffect } from "../hooks/UseDebounceEffect";
 import { cart } from "../redux/features/cartSlice";
 import { store } from "../redux/store";
+import { mediaUrl } from "../utils/mediaUrl";
 import {
   customerAddCart,
   customerAllProperty,
@@ -34,7 +35,7 @@ const PRODUCT_IMG_FALLBACK = "/csv.png";
 function productCoverUrl(product) {
   const id = product?.productImg?.[0];
   if (!id) return PRODUCT_IMG_FALLBACK;
-  return `${import.meta.env.VITE_API_URL}/getImg/${id}`;
+  return mediaUrl(id);
 }
 
 function AllProductList() {
@@ -77,7 +78,7 @@ function AllProductList() {
       toastAlert("success", t("PRODUCT_ADDED_SUCCESSFULLY"));
       queryClient.invalidateQueries({ queryKey: ["productList"] });
       const resp = await customerCartList();
-      store.dispatch(cart(resp?.data?.data?.list?.length));
+      store.dispatch(cart(resp?.data?.data?.list?.length ?? 0));
     },
   });
 
@@ -95,7 +96,10 @@ function AllProductList() {
               </p>
             </div>
             <div className="product-shop-actions">
-              <Link className="btn btn-white" to="/customer/property-listing">
+              <Link
+                className="btn btn-outline-primary"
+                to="/customer/property-listing"
+              >
                 Back to listings
               </Link>
               <button

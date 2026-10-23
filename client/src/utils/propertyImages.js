@@ -1,6 +1,8 @@
+import { mediaUrl } from "./mediaUrl";
+
 /**
- * Build displayable image URLs for a property (GridFS via /getImg).
- * Falls back to /property.jpg when nothing usable is stored.
+ * Build displayable image URLs for a property.
+ * Prefers static paths in `image` / path-like `propertyImgId` (demo mode).
  */
 export function propertyImageUrls(property) {
   const ids = property?.propertyImgId || [];
@@ -11,11 +13,11 @@ export function propertyImageUrls(property) {
     if (!id) continue;
     const type = types[i] || "image/jpeg";
     if (String(type).includes("pdf")) continue;
-    urls.push(`${import.meta.env.VITE_API_URL}/getImg/${id}`);
+    urls.push(mediaUrl(id, "/property.jpg"));
   }
   if (!urls.length && property?.image?.length) {
     for (const img of property.image) {
-      if (img) urls.push(String(img).replace(/"/g, ""));
+      if (img) urls.push(mediaUrl(String(img).replace(/"/g, ""), "/property.jpg"));
     }
   }
   return urls;

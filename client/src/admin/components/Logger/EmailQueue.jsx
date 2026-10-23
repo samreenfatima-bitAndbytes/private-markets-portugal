@@ -154,8 +154,7 @@ const EmailQueue = () => {
                 placeholder="Search With To"
                 value={pagination.search.trim()}
                 onChange={handleSearchChange}
-                className="form-control"
-                style={{ width: "250px" }}
+                className="form-control admin-toolbar__search"
               />
 
               <CustomSelect

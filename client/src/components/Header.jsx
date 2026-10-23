@@ -8,9 +8,9 @@ the property of Hotopics Unipessoal Lda. and it's partners.
 Unauthorized copying of this file, via any medium is strictly prohibited.
 */
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useFormik } from "formik";
 import React, { useState, useEffect } from "react";
+import { mediaUrl } from "../utils/mediaUrl";
 import {
   Button,
   Col,
@@ -41,16 +41,39 @@ import useDetails from "../hooks/useDetails";
 import { login } from "../redux/features/authSlice";
 import { setLanguage } from "../redux/features/languageSlice";
 import {
+  changePassword,
+  customerCartList,
   forgotPassword,
   register,
   resendOTP,
   signIn,
   verifyOTP,
 } from "../services/Services";
+import { cart as setCartCount } from "../redux/features/cartSlice";
 import { emailRegex } from "../utils/Functions";
 import { toastAlert } from "../utils/SweetAlert";
 import { constant } from "../utils/constant";
 import Loader from "../Loader/Loader";
+
+const openAccountMenuOrNavigate = (roleId, navigate) => {
+  let opened = false;
+  window.dispatchEvent(
+    new CustomEvent(OPEN_ACCOUNT_MENU_EVENT, {
+      detail: {
+        ack: () => {
+          opened = true;
+        },
+      },
+    })
+  );
+  if (!opened) {
+    navigate(
+      roleId === constant.REAL_STATE_AGENT
+        ? "/customer/property-list"
+        : "/customer/file-list"
+    );
+  }
+};
 
 const Header = () => {
   const cart = useSelector((state) => state?.cart);
@@ -70,6 +93,30 @@ const Header = () => {
   };
 
   const dispatch = useDispatch();
+  const data = useDetails();
+
+  // Sync header badge with real cart length (persisted count can go stale)
+  useEffect(() => {
+    let cancelled = false;
+    async function syncCartBadge() {
+      if (!data?.token) {
+        dispatch(setCartCount(0));
+        return;
+      }
+      try {
+        const resp = await customerCartList();
+        if (!cancelled) {
+          dispatch(setCartCount(resp?.data?.data?.list?.length ?? 0));
+        }
+      } catch {
+        if (!cancelled) dispatch(setCartCount(0));
+      }
+    }
+    syncCartBadge();
+    return () => {
+      cancelled = true;
+    };
+  }, [data?.token, dispatch]);
 
   useEffect(() => {
     const handleChangeLanguage = (value, label) => {
@@ -80,7 +127,6 @@ const Header = () => {
     handleChangeLanguage('English', 'English');
   }, [dispatch]);
 
-  const data = useDetails();
   const [showPass, setShowPass] = useState(false);
   const [showPassConfirm, setShowPassConfirm] = useState(false);
   const [showLoginPass, setShowLoginPass] = useState(false);
@@ -152,6 +198,7 @@ const Header = () => {
     handleBlur,
     handleChange,
     handleSubmit,
+    setFieldValue,
     resetForm,
   } = useFormik({
     initialValues: {
@@ -184,6 +231,11 @@ const Header = () => {
         const user = resp?.data?.data;
         dispatch(login(user));
         toastAlert("success", t("LOGIN_TOAST"));
+        customerCartList()
+          .then((cartResp) =>
+            dispatch(setCartCount(cartResp?.data?.data?.list?.length ?? 0))
+          )
+          .catch(() => dispatch(setCartCount(0)));
         // Role-based landing (admin / agent / buyer)
         if (user?.roleId === constant.ADMIN) {
           navigate("/admin/dashboard");
@@ -320,7 +372,7 @@ const Header = () => {
       verifyOTPFormik.resetForm();
 
       if (type == "forgot") {
-        setStoreToken(resp?.data?.token);
+        setStoreToken(resp?.data?.data?.token || resp?.data?.token || "demo");
         handleShow5();
         handleClose4();
       } else {
@@ -360,25 +412,16 @@ const Header = () => {
     }),
 
     onSubmit: (values) => {
-      let body = {
+      changePasswordMutation.mutate({
         password: values?.password,
-      };
-      changePasswordMutation.mutate(body);
+        newPassword: values?.password,
+        email: forgotFormik.values.email,
+        token: storeToken,
+      });
     },
   });
   const changePasswordMutation = useMutation({
-    mutationFn: async (body) => {
-      const resp = await axios.put(
-        `${import.meta.env.VITE_API_URL}/auth/changePassword`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${storeToken}`,
-          },
-        }
-      );
-      return resp;
-    },
+    mutationFn: (body) => changePassword(body),
     onSuccess: () => {
       toastAlert("success", t("PASSWORD_RESET_TOAST"));
       password.resetForm();
@@ -422,11 +465,12 @@ const Header = () => {
         viewBox="0 0 21 21"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
         <g clipPath="url(#clip0_sell_cta)">
           <path
             d="M20.7474 6.01429L14.8918 0.158698C14.6805 -0.0528993 14.3372 -0.0528993 14.1258 0.158698L14.101 0.183509C13.742 0.542454 13.5441 1.01993 13.5441 1.52763C13.5441 1.85472 13.6272 2.1686 13.7816 2.44694L7.65475 7.70522C7.18583 7.28615 6.58734 7.05678 5.95341 7.05678C5.2703 7.05678 4.62814 7.32277 4.14525 7.80577L4.10852 7.8425C3.89692 8.05399 3.89692 8.397 4.10852 8.60849L7.6165 12.1165L4.19996 15.5329C4.1316 15.6032 2.51445 17.2697 1.45126 18.5958C0.438781 19.8583 0.23856 20.0897 0.228159 20.1016C0.0401815 20.3157 0.0505825 20.6385 0.251778 20.8407C0.357198 20.9466 0.496204 21.0001 0.635643 21.0001C0.762732 21.0001 0.890145 20.9557 0.992639 20.8661C1.00163 20.8583 1.22764 20.6618 2.49841 19.643C3.82433 18.5798 5.49078 16.9625 5.56651 16.8887L8.97753 13.4777L12.2976 16.7978C12.4034 16.9037 12.5421 16.9566 12.6806 16.9566C12.8192 16.9566 12.958 16.9037 13.0636 16.7978L13.1004 16.7611C13.5834 16.2782 13.8493 15.6359 13.8493 14.9529C13.8493 14.319 13.6199 13.7205 13.2009 13.2516L18.4592 7.12471C18.7375 7.2791 19.0514 7.36221 19.3785 7.36221C19.8863 7.36221 20.3637 7.16448 20.7226 6.80531L20.7474 6.7805C20.959 6.5688 20.959 6.22578 20.7474 6.01429Z"
-            fill="#004AAD"
+            fill="currentColor"
           />
         </g>
         <defs>
@@ -434,9 +478,8 @@ const Header = () => {
             <rect width="21" height="21" fill="white" />
           </clipPath>
         </defs>
-      </svg>{" "}
-      &nbsp;&nbsp;&nbsp;
-      {t("SELL_YOUR_PROPERTY_OR_BUSINESS")}
+      </svg>
+      <span>{t("SELL_YOUR_PROPERTY_OR_BUSINESS")}</span>
     </Nav.Link>
   );
 
@@ -575,8 +618,7 @@ const Header = () => {
                     <img
                       src={
                         data?.profileImgId
-                          ? import.meta.env.VITE_API_URL +
-                            `/getImg/${data?.profileImgId}`
+                          ? mediaUrl(data?.profileImgId)
                           : "/default.png"
                       }
                       alt="Image"
@@ -691,38 +733,10 @@ const Header = () => {
             </Link>
 
             <Nav className="d-flex align-items-center">
-              {data?.token &&
-                (data?.roleId === constant.CUSTOMER ||
-                  data?.roleId === constant.REAL_STATE_AGENT) && (
-                  <Button
-                    className="btn-theme2-outline me-2 menu-btn"
-                    title={t("MY_DASHBOARD")}
-                    aria-label={t("MY_DASHBOARD")}
-                    onClick={() => {
-                      let opened = false;
-                      window.dispatchEvent(
-                        new CustomEvent(OPEN_ACCOUNT_MENU_EVENT, {
-                          detail: {
-                            ack: () => {
-                              opened = true;
-                            },
-                          },
-                        })
-                      );
-                      if (!opened) {
-                        navigate(
-                          data?.roleId === constant.REAL_STATE_AGENT
-                            ? "/customer/property-list"
-                            : "/customer/file-list"
-                        );
-                      }
-                    }}
-                  >
-                    <FaThLarge />
-                  </Button>
-                )}
               <Button
                 className="btn-theme2-outline me-2 menu-btn"
+                title={t("MENU")}
+                aria-label={t("MENU")}
                 onClick={handleShowOne}
               >
                 <FaBars />
@@ -742,8 +756,7 @@ const Header = () => {
                     <img
                       src={
                         data?.profileImgId
-                          ? import.meta.env.VITE_API_URL +
-                            `/getImg/${data?.profileImgId}`
+                          ? mediaUrl(data?.profileImgId)
                           : "/default.png"
                       }
                       alt="Image"
@@ -782,6 +795,20 @@ const Header = () => {
             <Offcanvas.Title>{t("MENU")}</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
+            {data?.token &&
+              (data?.roleId === constant.CUSTOMER ||
+                data?.roleId === constant.REAL_STATE_AGENT) && (
+                <Button
+                  className="btn btn-theme2 w-100 mb-3 d-flex align-items-center justify-content-center gap-2"
+                  onClick={() => {
+                    handleCloseOne();
+                    openAccountMenuOrNavigate(data?.roleId, navigate);
+                  }}
+                >
+                  <FaThLarge />
+                  {t("DASHBOARD_MENU")}
+                </Button>
+              )}
             {sellPropertyBtn}
             <Dropdown>
               <Dropdown.Toggle
@@ -889,13 +916,53 @@ const Header = () => {
           </Offcanvas.Body>
         </Offcanvas>
       </div>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} className="auth-modal-login">
         <Modal.Body>
           <Modal.Header closeButton className="p-0 border-0 pt-4">
-            <h2 className="text-center fw-600 mb-5 w-100">{t("LOGIN")}</h2>
+            <h2 className="text-center fw-600 mb-4 w-100">{t("LOGIN")}</h2>
           </Modal.Header>
           <Row>
-            <Col md={10} className="mx-auto py-5">
+            <Col md={10} className="mx-auto pb-4">
+              <div className="pm-demo-creds" aria-label="Demo login credentials">
+                <p className="pm-demo-creds__title">Demo accounts — click to fill</p>
+                <div className="pm-demo-creds__list">
+                  {[
+                    {
+                      role: "Buyer",
+                      email: "sofia@privatemarket.local",
+                      password: "Sofia@123",
+                    },
+                    {
+                      role: "Agent",
+                      email: "miguel@privatemarket.local",
+                      password: "Miguel@123",
+                    },
+                    {
+                      role: "Admin",
+                      email: "ana@privatemarket.local",
+                      password: "Ana@123456",
+                    },
+                  ].map((acct) => (
+                    <button
+                      key={acct.email}
+                      type="button"
+                      className="pm-demo-creds__chip"
+                      onClick={() => {
+                        setFieldValue("email", acct.email);
+                        setFieldValue("password", acct.password);
+                      }}
+                    >
+                      <span className="pm-demo-creds__role">{acct.role}</span>
+                      <span className="pm-demo-creds__meta">
+                        {acct.email}
+                        <br />
+                        {acct.password}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -962,7 +1029,7 @@ const Header = () => {
                     <Link onClick={handleShow2}>{t("FORGOT_PASSWORD_?")}</Link>
                   </div>
                 </div>
-                <div className="d-grid mt-5 mb-3">
+                <div className="d-grid mt-4 mb-3">
                   <button
                     className="btn btn-theme2 rounded-pill"
                     type="submit"
@@ -972,7 +1039,7 @@ const Header = () => {
                   </button>
                 </div>
               </form>
-              <p className="text-2 text-center text-dark fw-500 mb-5">
+              <p className="text-2 text-center text-dark fw-500 mb-4">
                 {t("NOT_HAVING_AN_ACCOUNT?")}
                 <Link onClick={handleShow1}>{t("REGISTER")}</Link>
               </p>

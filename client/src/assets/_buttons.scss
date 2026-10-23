@@ -8,15 +8,18 @@
   column-gap: 5px;
   font-size: 14px;
   line-height: 24px;
-  font-weight: 500;
-  border-radius: 0px;
+  font-weight: 600;
+  border-radius: var(--pm-radius-sm, 8px);
   border: 0;
   color: var(--white) !important;
-  background: #004aad ;
+  background: var(--pm-blue, #004aad);
   padding: 5px 40px;
+  transition: background 0.2s ease, transform 0.15s ease;
 
-  &:hover{
-    color: #FFF !important;
+  &:hover {
+    color: #fff !important;
+    background: var(--pm-blue-deep, #003a8a);
+    transform: translateY(-1px);
   }
 }
 
@@ -64,10 +67,38 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
   padding: 8px 25px;
   text-decoration: none;
   border: 0;
   width: auto;
+
+  &.btn-outline-primary,
+  &.btn-theme2-outline,
+  &.btn-white {
+    color: var(--pm-blue, #004aad) !important;
+    background: #fff !important;
+    border: 1px solid var(--pm-blue, #004aad) !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #fff !important;
+      background: var(--pm-blue, #004aad) !important;
+      border-color: var(--pm-blue, #004aad) !important;
+    }
+  }
+
+  &.btn-theme,
+  &.btn-theme2 {
+    color: #fff !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #fff !important;
+    }
+  }
 }
 
 .block-btn {

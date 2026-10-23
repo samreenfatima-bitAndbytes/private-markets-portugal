@@ -23,6 +23,7 @@ import { toastAlert } from "../../../utils/SweetAlert";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const ViewProduct = () => {
   const isSlider = useSlider();
@@ -127,8 +128,7 @@ const ViewProduct = () => {
                                   className="mx-2"
                                   src={
                                     file
-                                      ? import.meta.env.VITE_API_URL +
-                                        `/getImg/${file}`
+                                      ? mediaUrl(file)
                                       : "/static_image.jpg"
                                   }
                                   width="200px"

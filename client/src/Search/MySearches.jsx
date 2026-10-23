@@ -183,7 +183,7 @@ function MySearches() {
             <Col lg={3}>
               <UserSidebar />
             </Col>
-            <Col lg={9}>
+            <Col lg={9} className="min-w-0">
           <h2 className="mainheading mb-4">
             {t("YOUR_SEARCHES")} ({pagination.totalCount || 0})
           </h2>
@@ -197,14 +197,14 @@ function MySearches() {
               disabled={!searchList?.length || enableAndDisableMutation.isPending}
               onChange={(e) => toggleAllAlerts(e.target.checked)}
             />
-            <div>
+            <div className="min-w-0">
               <h4 className="mb-2 fw-bold">
                 {t("DAILY_ROUNDUP_OF_ALL_YOUR_SEARCHES")}
               </h4>
               <p className="fw-normal">{t("SAVE_SEARCH_CONTENT")}</p>
             </div>
           </div>
-              <Table>
+              <Table responsive>
                 <thead>
                   <tr>
                     <th></th>
@@ -215,10 +215,9 @@ function MySearches() {
                 </thead>
                 <tbody>
                   {searchList?.length > 0 ? (
-                    searchList?.map((data, index) => {
+                    searchList?.map((data) => {
                       return (
-                        <>
-                          <tr key={index}>
+                          <tr key={data?._id}>
                             <td>
                               <h4>
                                 <Link className="item_title">
@@ -256,13 +255,13 @@ function MySearches() {
                                   constant.PROPERTY_NEED_RENOVATING &&
                                   "Needs renovating;"}
                                 &nbsp;
-                                {data?.other_features_real_estate == ""
-                                  ? ""
-                                  : data?.other_features_real_estate + ";"}
+                                {data?.other_features_real_estate
+                                  ? `${data.other_features_real_estate};`
+                                  : ""}
                                 &nbsp;
-                                {data?.other_features_building == ""
-                                  ? ""
-                                  : data?.other_features_building + ";"}
+                                {data?.other_features_building
+                                  ? `${data.other_features_building};`
+                                  : ""}
                                 &nbsp;
                                 {data?.date == ""
                                   ? ""
@@ -347,27 +346,23 @@ function MySearches() {
                                   />
                                 </>
                                 {Number(data?.typeId) === 1 ? (
-                                  <>
-                                    <div>
-                                      <h6 className="mb-0 fw-bold">
-                                        {t("ACTIVATE_INSTANT_ALERTS")}
-                                      </h6>
-                                      <p className="fw-normal">
-                                        {t("YOU_WILL_RECEIVE_THE_DAILY_EMAIL")}
-                                      </p>
-                                    </div>
-                                  </>
+                                  <div>
+                                    <h6 className="mb-0 fw-bold">
+                                      {t("INSTANT_ALERTS_ACTIVE")}
+                                    </h6>
+                                    <p className="fw-normal">
+                                      {t("EMAIL_FOR_EACH_NEW_LISTING")}
+                                    </p>
+                                  </div>
                                 ) : (
-                                  <>
-                                    <div>
-                                      <h6 className="mb-0 fw-bold">
-                                        {t("INSTANT_ALERTS_ACTIVE")}
-                                      </h6>
-                                      <p className="fw-normal">
-                                        {t("EMAIL_FOR_EACH_NEW_LISTING")}
-                                      </p>
-                                    </div>
-                                  </>
+                                  <div>
+                                    <h6 className="mb-0 fw-bold">
+                                      {t("ACTIVATE_INSTANT_ALERTS")}
+                                    </h6>
+                                    <p className="fw-normal">
+                                      {t("YOU_WILL_RECEIVE_THE_DAILY_EMAIL")}
+                                    </p>
+                                  </div>
                                 )}
                               </div>
                             </td>
@@ -397,7 +392,6 @@ function MySearches() {
                               </Button>
                             </td>
                           </tr>
-                        </>
                       );
                     })
                   ) : (

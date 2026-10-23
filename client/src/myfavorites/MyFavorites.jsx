@@ -95,7 +95,7 @@ function MyFavorites() {
             <Col lg={3}>
               <UserSidebar />
             </Col>
-            <Col lg={9}>
+            <Col lg={9} className="min-w-0">
                 <h1 className="mainheading">{t("MY_FAVOURITES")}</h1>
                 <div
                   className="order-by d-flex align-items-center justify-content-end"

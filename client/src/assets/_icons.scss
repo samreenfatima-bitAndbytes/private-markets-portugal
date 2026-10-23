@@ -3,7 +3,7 @@
 :root {
   --icon-brand: #004aad;
   --icon-brand-soft: rgba(0, 74, 173, 0.1);
-  --icon-brand-hover: #003580;
+  --icon-brand-hover: #003a8a;
   --icon-muted: #3d4f66;
   --icon-danger: #c62828;
   --icon-success: #1b7a3d;
@@ -95,8 +95,13 @@ a.logo,
 
 .navbar a.logo svg,
 a.logo svg {
-  width: min(220px, 42vw) !important;
-  max-height: 48px;
+  width: min(200px, 48vw) !important;
+  height: auto !important;
+  max-height: none;
+  /* Keep vector crisp when scaled */
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* Header / nav action icons (exclude logo) */
@@ -219,7 +224,7 @@ header a:not(.logo):not(.admin-logo) svg,
     color: #fff !important;
 
     &:hover:not(:disabled) {
-      background-color: #003580 !important;
+      background-color: #003a8a !important;
     }
   }
 

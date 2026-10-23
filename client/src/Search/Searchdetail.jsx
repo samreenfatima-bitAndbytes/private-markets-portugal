@@ -28,6 +28,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loader from "../Loader/Loader";
 import PropertyMap from "../components/PropertyMap";
+import { mediaUrl } from "../utils/mediaUrl";
 
 function Searchdetail() {
   const [height, setHeight] = useState(0);
@@ -60,7 +61,7 @@ function Searchdetail() {
       const fileType = viewProperty?.fileType?.[index];
       if (fileType !== "application/pdf" && imgId) {
         docs.push({
-          uri: `${import.meta.env.VITE_API_URL}/getImg/${imgId}`,
+          uri: mediaUrl(imgId),
         });
       }
     });

@@ -1,25 +1,48 @@
 :root {
-  --primary-light: #ffe0e1;
+  /* Brand — matches logo.svg (#004AAD blue + #051325 black) */
+  --pm-ink: #051325;
+  --pm-navy: #0a1e36;
+  --pm-blue: #004aad;
+  --pm-blue-deep: #003a8a;
+  --pm-blue-soft: #e8f1fb;
+  --pm-mist: #eef2f7;
+  --pm-sand: #f5f7fa;
+  --pm-stone: #6b7280;
+  --pm-line: #d5dde6;
+  --pm-white: #ffffff;
+  --pm-radius: 12px;
+  --pm-radius-sm: 8px;
+  --pm-shadow: 0 12px 40px rgba(5, 19, 37, 0.12);
+  --pm-shadow-soft: 0 4px 18px rgba(5, 19, 37, 0.08);
+  --pm-font-display: "Fraunces", Georgia, serif;
+  --pm-font-body: "DM Sans", system-ui, sans-serif;
+
+  /* Back-compat aliases used across SCSS */
+  --pm-sea: var(--pm-blue);
+  --pm-sea-deep: var(--pm-blue-deep);
+
+  --primary-light: #dce8f8;
   --secondary-light: #eaeaea;
-  --secondary-light-one: #666c89;
-  --dark-two: #000;
-  --dark-two-three: #313131;
-  --bg-light-primary: #ffefef;
-  --bg-light-theme: #fff9f9;
-  --bg-light-theme-two: #ffe9e9;
-  --shadow-one: rgba(0, 0, 0, 0.1) 0px 3px 8px;
-  --border-color-one: #d2d2d2;
-  --red-one: #c1000d;
-  --green-one: #00c11f;
-  --theme-color: #272d35;
-  --primary-color: #3693ff;
-  --secondary: #232635;
-  --dark: #1b1a2f;
-  --dark-one: #0d0f19;
+  --secondary-light-one: #5c667a;
+  --dark-two: #051325;
+  --dark-two-three: #243447;
+  --bg-light-primary: #eef3fb;
+  --bg-light-theme: #f7f9fb;
+  --bg-light-theme-two: #e4ecf8;
+  --shadow-one: var(--pm-shadow-soft);
+  --border-color-one: var(--pm-line);
+  --red-one: #b42318;
+  --green-one: #004aad;
+  --theme-color: var(--pm-ink);
+  --primary-color: var(--pm-blue);
+  --secondary: var(--pm-ink);
+  --dark: var(--pm-ink);
+  --dark-one: #020810;
   --white: #fff;
-  --gray: #d2d2d2;
-  --gradient: linear-gradient(to right, #394795, #59bdf0);
+  --gray: #c9d1db;
+  --gradient: linear-gradient(135deg, #051325 0%, #004aad 100%);
 }
+
 .ptb80 {
   padding-top: 80px;
   padding-bottom: 80px;
@@ -29,11 +52,6 @@
   width: 100%;
   height: auto;
   overflow: hidden;
-}
-
-.ptb80 {
-  padding-top: 80px;
-  padding-bottom: 80px;
 }
 
 .text-red {

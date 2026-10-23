@@ -94,9 +94,12 @@ function Checkout() {
       { ids: propertyId?.map((i) => i) }
     );
     if (resp?.status === 200) {
-      window.location.assign(
-        import.meta.env.VITE_API_URL + "/" + resp?.data?.data
-      );
+      const filePath = resp?.data?.data;
+      const url =
+        String(filePath).startsWith("/") || String(filePath).startsWith("http")
+          ? filePath
+          : `/${filePath}`;
+      window.location.assign(url);
       toastAlert("success", resp?.data?.message);
       handleClose();
       navigate(`/customer/file-list`);

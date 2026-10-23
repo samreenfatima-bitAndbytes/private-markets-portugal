@@ -36,6 +36,84 @@
       font-size: 40px;
     }
   }
+
+  .otp-form {
+    width: 100%;
+    max-width: 350px;
+    margin-inline: auto;
+  }
+
+  .csvmodal .modal-dialog {
+    min-width: 0 !important;
+    max-width: calc(100vw - 1.5rem);
+    width: 100%;
+    margin: 0.75rem auto;
+  }
+
+  .auth-modal-register .modal-body,
+  .auth-modal-login .modal-body {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .listing-filters__primary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .listing-filters .pm-select,
+  .listing-filters .lf-field .pm-select {
+    min-width: 0 !important;
+  }
+
+  .details-property.d-flex {
+    flex-direction: column !important;
+  }
+
+  .details-box .details-property-feature-one,
+  .details-box .details-property-feature-two {
+    min-width: 100% !important;
+    width: 100%;
+  }
+
+  #my-file-tabs.nav-tabs {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .employee-dashbord,
+  .emp-dash-body {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .offcanvas-body {
+    .btn-outline-primary,
+    .btn.btn-outline-primary {
+      width: 100%;
+      height: auto !important;
+      min-height: 48px;
+      white-space: normal;
+      line-height: 1.35 !important;
+      text-align: center;
+    }
+  }
+
+  .order-by {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px;
+
+    .gross-drop,
+    .pm-select.gross-drop {
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+    }
+  }
+
+  .image-grid > div {
+    flex: 1 1 calc(50% - 10px) !important;
+    max-width: calc(50% - 10px);
+  }
 }
 
 @media (max-width: 767px) {
@@ -52,7 +130,7 @@
     a {
       &.logo {
         svg {
-          width: 168px !important;
+          width: min(168px, 42vw) !important;
           max-height: 40px;
         }
       }
@@ -63,10 +141,55 @@
     span {
       &.logo {
         svg {
-          width: 168px !important;
+          width: min(168px, 42vw) !important;
         }
       }
     }
+  }
+
+  .breadcrumbs {
+    padding: 40px 0;
+
+    h1 {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+  }
+
+  .otp-form {
+    input[type="number"] {
+      width: 42px !important;
+      height: 42px;
+    }
+  }
+
+  .auth-modal-register .modal-body,
+  .auth-modal-login .modal-body {
+    padding: 1.25rem 1rem !important;
+  }
+
+  /* Favourites + listings: wrap meta chips */
+  .property_list_item .single_property_top > p.mt-2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+
+  .steps ul li {
+    font-size: 11px;
+    padding-inline: 4px;
+  }
+
+  .image-grid > div {
+    flex: 1 1 100% !important;
+    max-width: 100%;
+  }
+
+  .emp-dash-body table th,
+  .emp-dash-body table td,
+  .employee-dashbord table th,
+  .employee-dashbord table td {
+    text-wrap: unset;
+    white-space: normal;
   }
 }
 

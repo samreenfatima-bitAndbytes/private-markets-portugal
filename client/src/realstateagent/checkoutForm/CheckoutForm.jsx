@@ -1,15 +1,10 @@
 /**
 @copyright : Hotopics Unipessoal Lda. < www.toxsl.com >
-@author    : Shiv Charan Panjeta 
- 
-All Rights Reserved.
-Proprietary and confidential :  All information contained here in is, and remains
-the property of Hotopics Unipessoal Lda. and it's partners.
-Unauthorized copying of this file, via any medium is strictly prohibited.
+@author    : Shiv Charan Panjeta
 */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardBody, Col, Container, Modal, Row } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -17,17 +12,31 @@ import Swal from "sweetalert2";
 import Loader from "../../Loader/Loader";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import { cart } from "../../redux/features/cartSlice";
-import { store } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { cart as setCartCount } from "../../redux/features/cartSlice";
 import {
   contactCsvDownload,
   customerCardDelete,
   customerCardList,
+  customerCartList,
   customerOrderCreate,
   customerOrderDownload,
 } from "../../services/Services";
 import { toastAlert } from "../../utils/SweetAlert";
 import StripeCard from "./StripeCard";
+
+function cardId(card) {
+  return String(card?.id || card?._id || "");
+}
+
+function formatExpiry(card) {
+  const month = Number(card?.exp_month ?? card?.expMonth) || 0;
+  const year = Number(card?.exp_year ?? card?.expYear) || 0;
+  if (!month || !year) return "";
+  const yy = String(year).slice(-2).padStart(2, "0");
+  const mm = String(month).padStart(2, "0");
+  return `${mm}/${yy}`;
+}
 
 const CheckoutForm = () => {
   const [show, setShow] = useState(false);
@@ -36,18 +45,49 @@ const CheckoutForm = () => {
   const [propertyId, setPropertyId] = useState([]);
   const [paidOrderId, setPaidOrderId] = useState("");
   const location = useLocation();
-
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const [selectedCard, setSelectedCard] = useState("");
+
   const { data: cardList, isFetching } = useQuery({
     queryKey: ["cardList"],
-    queryFn: async ({ queryKey }) => {
-      const [_key] = queryKey;
+    queryFn: async () => {
       const resp = await customerCardList();
-      return resp.data?.data;
+      return resp.data?.data ?? [];
     },
   });
+
+  const { data: cartSnapshot } = useQuery({
+    queryKey: ["cart-list", "payment-total"],
+    queryFn: async () => {
+      const resp = await customerCartList();
+      return {
+        total: Number(resp?.data?.data?.total ?? 0),
+        productIds: (resp?.data?.data?.list || [])
+          .map(
+            (row) =>
+              row?.productId ||
+              row?.productDetails?._id ||
+              row?.propertyId
+          )
+          .filter(Boolean),
+      };
+    },
+  });
+
+  const totalPrice = useMemo(() => {
+    const fromNav = Number(location?.state?.totalPrice);
+    if (fromNav > 0) return fromNav;
+    return Number(cartSnapshot?.total ?? 0);
+  }, [location?.state?.totalPrice, cartSnapshot?.total]);
+
+  const productIds = useMemo(() => {
+    const fromNav = location?.state?.productIds;
+    if (Array.isArray(fromNav) && fromNav.length) return fromNav;
+    return cartSnapshot?.productIds || [];
+  }, [location?.state?.productIds, cartSnapshot?.productIds]);
+
   const handleDelete = (id) => {
     Swal.fire({
       title: t("ARE_YOU_SURE"),
@@ -64,6 +104,7 @@ const CheckoutForm = () => {
       }
     });
   };
+
   const deleteSchedularList = useMutation({
     mutationFn: (id) => customerCardDelete(id),
     onSuccess: () => {
@@ -71,7 +112,6 @@ const CheckoutForm = () => {
       queryClient.invalidateQueries({ queryKey: ["cardList"] });
     },
   });
-  const [selectedCard, setSelectedCard] = useState("");
 
   // Auto-select newly added / only remaining card
   useEffect(() => {
@@ -79,31 +119,34 @@ const CheckoutForm = () => {
       setSelectedCard("");
       return;
     }
-    const stillSelected = cardList.some((c) => String(c.id) === String(selectedCard));
+    const stillSelected = cardList.some(
+      (c) => cardId(c) === String(selectedCard)
+    );
     if (stillSelected) return;
     const newest = [...cardList].sort(
       (a, b) => Number(b.created || 0) - Number(a.created || 0)
     )[0];
-    if (newest?.id) setSelectedCard(String(newest.id));
+    const next = cardId(newest);
+    if (next) setSelectedCard(next);
   }, [cardList, selectedCard]);
 
   const handlePayAmount = () => {
-    if (selectedCard) {
-      let body = {
-        paymentMethodId: selectedCard,
-        orderTotal: location?.state?.totalPrice,
-        total: location?.state?.totalPrice,
-        productIds: location?.state?.productIds || [],
-      };
-
-      payMutation.mutate(body);
-    } else {
-      toastAlert(
-        "error",
-        t("SELECT_CARD_TOAST") + " " + location?.state?.totalPrice
-      );
+    if (!selectedCard) {
+      toastAlert("error", t("SELECT_CARD_TOAST"));
+      return;
     }
+    if (!(totalPrice > 0) && !productIds.length) {
+      toastAlert("error", "Your cart is empty");
+      return;
+    }
+    payMutation.mutate({
+      paymentMethodId: selectedCard,
+      orderTotal: totalPrice,
+      total: totalPrice,
+      productIds,
+    });
   };
+
   const payMutation = useMutation({
     mutationFn: (body) => customerOrderCreate(body),
     onSuccess: (resp) => {
@@ -114,6 +157,8 @@ const CheckoutForm = () => {
       setPropertyId(resp?.data?.data?.productId || []);
       setPaidOrderId(resp?.data?.data?._id || "");
       toastAlert("success", t("ORDER_ADD_TOAST"));
+      dispatch(setCartCount(0));
+      queryClient.invalidateQueries({ queryKey: ["cart-list"] });
       handleShow();
     },
     onError: (e) => {
@@ -150,8 +195,12 @@ const CheckoutForm = () => {
         return;
       }
 
-      store.dispatch(cart(0));
-      window.location.assign(`${import.meta.env.VITE_API_URL}/${filePath}`);
+      dispatch(setCartCount(0));
+      const url =
+        String(filePath).startsWith("/") || String(filePath).startsWith("http")
+          ? filePath
+          : `/${filePath}`;
+      window.location.assign(url);
       toastAlert("success", t("FILE_DOWNLOAD_TOAST"));
       handleClose();
       navigate(`/customer/file-list`);
@@ -163,6 +212,8 @@ const CheckoutForm = () => {
     }
   };
 
+  const displayTotal = Number(totalPrice || 0).toLocaleString();
+
   return (
     <>
       <Header />
@@ -171,33 +222,48 @@ const CheckoutForm = () => {
           <div className="sidebox overflow-hidden bg-white py-5">
             <Row>
               <Col md={8} className="mx-auto">
-                <h4 className="text-center mb-lg-5  mb-3 text-uppercase">
+                <h4 className="text-center mb-lg-5 mb-3 text-uppercase">
                   {t("FILL")}
                 </h4>
                 <StripeCard />
 
                 <Row>
                   {cardList?.length > 0
-                    ? cardList?.map((data, index) => {
+                    ? cardList.map((data) => {
+                        const id = cardId(data);
+                        const expiry = formatExpiry(data);
+                        const selected = id === String(selectedCard);
                         return (
-                          <div className="col-xl-6" key={index}>
-                            <Card className="mb-3 p-0">
+                          <div className="col-xl-6" key={id}>
+                            <Card
+                              className={`mb-3 p-0 payment-card-shell ${
+                                selected ? "is-selected" : ""
+                              }`}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => setSelectedCard(id)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  setSelectedCard(id);
+                                }
+                              }}
+                            >
                               <CardBody>
                                 <div className="payment-card">
                                   <input
                                     className="radio-inner"
                                     type="radio"
                                     name="card-radio"
-                                    value={data?.id}
-                                    id={data?.id}
-                                    checked={data?.id == selectedCard}
-                                    onChange={(e) =>
-                                      setSelectedCard(e.target.value)
-                                    }
+                                    value={id}
+                                    id={`card-${id}`}
+                                    checked={selected}
+                                    onChange={() => setSelectedCard(id)}
+                                    onClick={(e) => e.stopPropagation()}
                                   />
-                                  <div
+                                  <label
                                     className="chck-label blk-txt"
-                                    htmlFor={data?.id}
+                                    htmlFor={`card-${id}`}
                                   >
                                     <span className="card-icn-design">
                                       <svg
@@ -207,33 +273,34 @@ const CheckoutForm = () => {
                                         fill="currentColor"
                                         className="bi bi-credit-card-2-back"
                                         viewBox="0 0 16 16"
+                                        aria-hidden="true"
                                       >
                                         <path d="M11 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z" />
                                         <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v5H1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-1 9H2a1 1 0 0 1-1-1v-1h14v1a1 1 0 0 1-1 1z" />
                                       </svg>
                                     </span>
                                     {t("DEBIT_CARD")}
-                                  </div>
-                                  <label
-                                    htmlFor={1}
-                                    className="d-flex align-items-start justify-content-between"
-                                  >
+                                  </label>
+                                  <div className="d-flex align-items-start justify-content-between">
                                     <div className="credit-card visa">
                                       <div className="credit-card-last4">
-                                        {data?.last4}
+                                        •••• {data?.last4}
                                       </div>
-                                      <div className="credit-card-expiry">
-                                        {data?.exp_month}/{data?.exp_year}
-                                      </div>
+                                      {expiry ? (
+                                        <div className="credit-card-expiry">
+                                          {expiry}
+                                        </div>
+                                      ) : null}
                                     </div>
-                                    <p className="card-name"> {data?.brand} </p>
-                                  </label>
+                                    <p className="card-name">{data?.brand}</p>
+                                  </div>
                                   <button
                                     className="delete-btn"
                                     title={t("DELETE")}
                                     type="button"
-                                    onClick={() => {
-                                      handleDelete(data?.id);
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(id);
                                     }}
                                   >
                                     <FaTrashAlt />
@@ -244,12 +311,11 @@ const CheckoutForm = () => {
                           </div>
                         );
                       })
-                    : ""}
+                    : null}
                 </Row>
 
                 <p className="text-center mt-4">
-                  {t("CART_DETAIL")}{" "}
-                  <strong>€{location?.state?.totalPrice}</strong>
+                  {t("CART_DETAIL")} <strong>€{displayTotal}</strong>
                   {t("CART_DETILS*")}
                   <Link
                     to="/terms-conditions"
@@ -258,7 +324,7 @@ const CheckoutForm = () => {
                   >
                     {t("TERMS_&_CONDITION")}
                   </Link>{" "}
-                  &
+                  &amp;
                   <Link
                     to="/privacy-policy"
                     className="text-underline"
@@ -271,28 +337,24 @@ const CheckoutForm = () => {
               </Col>
             </Row>
             {cardList?.length > 0 ? (
-              <>
-                <div className="d-flex align-items-center justify-content-center gap-4">
-                  <button
-                    onClick={() => navigate(-1)}
-                    type="button"
-                    className="add-modal-btn me-0  "
-                  >
-                    {t("BACK")}
-                  </button>
-                  <button
-                    className="add-modal-btn me-0 "
-                    onClick={() => {
-                      handlePayAmount();
-                    }}
-                  >
-                    {t("PAY")}&nbsp;€{location?.state?.totalPrice}
-                  </button>
-                </div>
-              </>
-            ) : (
-              ""
-            )}
+              <div className="d-flex align-items-center justify-content-center gap-4">
+                <button
+                  onClick={() => navigate(-1)}
+                  type="button"
+                  className="add-modal-btn me-0"
+                >
+                  {t("BACK")}
+                </button>
+                <button
+                  className="add-modal-btn me-0"
+                  type="button"
+                  disabled={payMutation.isPending || !selectedCard}
+                  onClick={handlePayAmount}
+                >
+                  {t("PAY")}&nbsp;€{displayTotal}
+                </button>
+              </div>
+            ) : null}
           </div>
         </Container>
       </section>
@@ -306,7 +368,7 @@ const CheckoutForm = () => {
           ></Modal.Header>
           <Row>
             <Col md={10} className="mx-auto py-5 text-center">
-              <img src="../pay.png" width={150} />
+              <img src="/pay.png" width={150} alt="" />
               <h5 className="mt-4 mb-4">
                 {t("PAYMENT")} <br />
                 {t("SUCCESSFULLY_DONE")}
@@ -326,9 +388,7 @@ const CheckoutForm = () => {
       payMutation?.isPending ||
       deleteSchedularList?.isPending ? (
         <Loader />
-      ) : (
-        ""
-      )}
+      ) : null}
     </>
   );
 };

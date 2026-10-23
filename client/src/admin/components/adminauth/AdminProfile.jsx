@@ -23,6 +23,7 @@ import { CameraIcon } from "../../../utils/Icons";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const AdminProfile = () => {
   const [editButton, setEdiButton] = useState(false);
@@ -103,15 +104,16 @@ const AdminProfile = () => {
       <div className="mainbox">
         <Sidebar />
         <div className={isSlider ? "body-content close" : "body-content open"}>
-          <div className="d-flex align-items-center justify-content-between">
-            <h2 className="mainhead mb-0">
+          <div className="admin-toolbar">
+            <h2 className="mainhead">
               <Link to="/admin/dashboard" className="bread_color">
                 Home
-              </Link> / Admin Profile
+              </Link>{" "}
+              / Admin Profile
             </h2>
           </div>
 
-          <section className="inner-wrap pt-5">
+          <section className="inner-wrap admin-profile-wrap">
             <Container fluid className="px-0">
               <div className="custom-card">
                 {!editButton && (
@@ -136,8 +138,7 @@ const AdminProfile = () => {
                               values.newPicked
                                 ? URL.createObjectURL(values.newPicked)
                                 : values.profileImg
-                                ? import.meta.env.VITE_API_URL +
-                                  `/getImg/${values?.profileImg}`
+                                ? mediaUrl(values?.profileImg)
                                 : "/default.png"
                             }
                             alt="Image"
@@ -225,8 +226,7 @@ const AdminProfile = () => {
                         <img
                           src={
                             data?.profileImgId
-                              ? import.meta.env.VITE_API_URL +
-                                `/getImg/${data?.profileImgId}`
+                              ? mediaUrl(data?.profileImgId)
                               : "/default.png"
                           }
                           alt="Profile"

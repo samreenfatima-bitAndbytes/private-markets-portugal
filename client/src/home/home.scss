@@ -3,20 +3,36 @@
   padding: 0 !important;
 
   .home-hero__bg {
-    min-height: min(78vh, 640px);
+    min-height: min(82vh, 680px);
     display: flex;
     align-items: center;
     background-image:
       linear-gradient(
-        115deg,
-        rgba(8, 24, 48, 0.82) 0%,
-        rgba(0, 74, 173, 0.55) 48%,
-        rgba(8, 24, 48, 0.45) 100%
+        125deg,
+        rgba(5, 19, 37, 0.9) 0%,
+        rgba(0, 74, 173, 0.72) 48%,
+        rgba(5, 19, 37, 0.55) 100%
       ),
       url("/banner.jpg");
     background-position: center;
     background-size: cover;
-    padding: 96px 0 56px;
+    padding: 104px 0 64px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0, 74, 173, 0.35), transparent),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(5, 19, 37, 0.4), transparent);
+      pointer-events: none;
+    }
+
+    > .container {
+      position: relative;
+      z-index: 1;
+    }
   }
 
   .home-hero__inner {
@@ -30,25 +46,28 @@
 
   .home-hero__brand {
     display: inline-block;
-    color: #004aad !important;
-    font-size: 0.95rem;
-    letter-spacing: 0.16em;
+    color: var(--pm-blue, #004aad) !important;
+    font-family: var(--pm-font-body);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    font-weight: 800;
-    margin: 0 auto 14px;
-    padding: 8px 18px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    font-weight: 700;
+    margin: 0 auto 18px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     text-shadow: none;
   }
 
   .home-hero__title {
     color: #fff !important;
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 14px;
+    font-family: var(--pm-font-display, "Fraunces", Georgia, serif);
+    font-size: clamp(2rem, 4.5vw, 3.15rem);
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.03em;
   }
 
   .home-hero__lead {
@@ -135,8 +154,8 @@
     }
 
     &:has(.pm-select--embedded.is-open) {
-      border-color: #004aad;
-      box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.12);
+      border-color: var(--pm-sea, #004aad);
+      box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.18);
     }
 
     &.selectcustom svg {
@@ -311,18 +330,19 @@
 .home-card {
   height: 100%;
   background: #fff;
-  border: 1px solid #e6ebf2;
-  border-radius: 14px;
+  border: 1px solid var(--pm-line, #e6ebf2);
+  border-radius: var(--pm-radius, 12px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--pm-shadow-soft);
   transition:
     transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.28s ease;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(16, 24, 40, 0.1);
+    box-shadow: var(--pm-shadow);
   }
 
   .home-card__media {
@@ -373,7 +393,7 @@
   }
 
   .home-card__price {
-    color: #004aad;
+    color: var(--pm-blue, #004aad);
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 10px;
@@ -505,30 +525,39 @@ nav {
 
   .btn-outline-primary {
     background: #fff !important;
-    border: 1px solid #cfcfcf !important;
+    border: 1px solid #004aad !important;
     border-radius: 30px;
     line-height: 50px;
     padding: 0 25px !important;
-    color: #1c1c1c;
-    font-weight: 500;
+    color: #004aad !important;
+    font-weight: 600;
     box-shadow: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 
-    &:hover {
-      background: #f7f8fa !important;
-      border-color: #cfcfcf !important;
-      color: #1c1c1c;
+    svg,
+    svg path,
+    svg [fill] {
+      fill: currentColor !important;
     }
 
-    /* Keep white after click / modal — avoid pale stuck focus */
+    &:hover,
     &:focus,
     &:focus-visible,
     &:active,
     &.active,
     &:active:focus {
-      background: #fff !important;
-      border-color: #cfcfcf !important;
-      color: #1c1c1c !important;
+      background: #004aad !important;
+      border-color: #004aad !important;
+      color: #fff !important;
       box-shadow: none !important;
+
+      svg,
+      svg path,
+      svg [fill] {
+        fill: currentColor !important;
+      }
     }
   }
 
@@ -644,7 +673,9 @@ footer {
 }
 
 .otp-form {
-  width: 350px;
+  width: 100%;
+  max-width: 350px;
+  margin-inline: auto;
   padding-top: 30px;
   > div {
     display: flex;
@@ -698,33 +729,45 @@ footer {
 .offcanvas-body {
   .btn-outline-primary {
     background: #fff !important;
-    border: 1px solid #cfcfcf !important;
+    border: 1px solid #004aad !important;
     border-radius: 30px;
     line-height: 50px;
     padding: 0 25px !important;
-    color: #1c1c1c;
-    font-weight: 500;
+    color: #004aad !important;
+    font-weight: 600;
     box-shadow: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 
-    &:hover {
-      background: #f7f8fa !important;
-      border-color: #cfcfcf !important;
-      color: #1c1c1c;
+    svg,
+    svg path,
+    svg [fill] {
+      fill: currentColor !important;
     }
 
+    &:hover,
     &:focus,
     &:focus-visible,
     &:active,
     &.active,
     &:active:focus {
-      background: #fff !important;
-      border-color: #cfcfcf !important;
-      color: #1c1c1c !important;
+      background: #004aad !important;
+      border-color: #004aad !important;
+      color: #fff !important;
       box-shadow: none !important;
+
+      svg,
+      svg path,
+      svg [fill] {
+        fill: currentColor !important;
+      }
     }
   }
-  .btn {
-    color: #000;
+
+  .btn.btn-theme,
+  .btn.btn-theme2 {
+    color: #fff !important;
   }
 }
 

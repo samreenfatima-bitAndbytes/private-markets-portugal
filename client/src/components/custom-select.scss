@@ -1,10 +1,15 @@
 .pm-select {
   position: relative;
   width: 100%;
-  min-width: 160px;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    min-width: 160px;
+  }
 
   &.gross-drop {
     max-width: 260px;
+    min-width: 0;
   }
 
   &.rounded-pill .pm-select__trigger {

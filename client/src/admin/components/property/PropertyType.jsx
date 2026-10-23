@@ -164,8 +164,7 @@ const PropertyType = () => {
                 placeholder="Search"
                 value={pagination.search}
                 onChange={handleSearchChange}
-                className="form-control"
-                style={{ width: "250px" }}
+                className="form-control admin-toolbar__search"
               />
 
               <CustomSelect

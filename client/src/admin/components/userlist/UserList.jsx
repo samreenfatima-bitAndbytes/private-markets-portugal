@@ -22,6 +22,7 @@ import CustomSelect from "../../../components/CustomSelect";
 import { constant } from "../../../utils/constant";
 import Sidebar from "../../sidebar/Sidebar";
 import AdminFooter from "../AdminFooter";
+import { mediaUrl } from "../../../utils/mediaUrl";
 
 const UserList = () => {
   const isSlider = useSlider();
@@ -80,23 +81,22 @@ const UserList = () => {
       <div className="mainbox">
         <Sidebar />
         <div className={isSlider ? "body-content close" : "body-content open"}>
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <h2 className="mainhead mb-0">
+          <div className="admin-toolbar">
+            <h2 className="mainhead">
               <Link to="/admin/dashboard" className="bread_color">
                 Home
-              </Link> / Users Management
+              </Link>{" "}
+              / Users Management
             </h2>
-            <div className=" d-flex align-items-center gap-3 my-2 mx-1">
+            <div className="admin-toolbar__actions">
               <input
                 type="text"
                 placeholder="Search With Email"
                 value={pagination.search}
                 onChange={handleSearchChange}
-                className="form-control"
-                style={{ width: "250px" }}
+                className="form-control admin-toolbar__search"
               />
-
-              <div style={{ minWidth: 160 }}>
+              <div className="admin-toolbar__filter">
                 <CustomSelect
                   value={String(pagination.state ?? "")}
                   onChange={handleStateFilterChange}
@@ -144,8 +144,7 @@ const UserList = () => {
                                   <img
                                     src={
                                       data?.profileImgId
-                                        ? import.meta.env.VITE_API_URL +
-                                          `/getImg/${data?.profileImgId}`
+                                        ? mediaUrl(data?.profileImgId)
                                         : "/default.png"
                                     }
                                   />

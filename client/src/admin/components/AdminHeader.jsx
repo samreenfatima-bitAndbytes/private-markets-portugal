@@ -21,6 +21,7 @@ import { toastAlert } from "../../utils/SweetAlert";
 import { useMutation } from "@tanstack/react-query";
 import { logOut } from "../../services/Services";
 import { login } from "../../redux/features/authSlice";
+import { mediaUrl } from "../../utils/mediaUrl";
 
 const AdminHeader = () => {
   const data = useDetails();
@@ -61,15 +62,14 @@ const AdminHeader = () => {
                   <img
                     src={
                       data?.profileImgId
-                        ? import.meta.env.VITE_API_URL +
-                          `/getImg/${data?.profileImgId}`
+                        ? mediaUrl(data?.profileImgId)
                         : "/default.png"
                     }
-                    width={60} 
-                    alt="Image"
+                    width={60}
+                    alt=""
                   />
                 </span>
-                {data?.firstName}
+                <span className="d-none d-sm-inline">{data?.firstName}</span>
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item onClick={() => navigate("/admin/profile")}>

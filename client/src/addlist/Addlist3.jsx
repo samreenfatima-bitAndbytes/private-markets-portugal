@@ -20,6 +20,7 @@ import Header from "../components/Header";
 import { agentAddProperty, agentUpdateProperty } from "../services/Services";
 import { toastAlert } from "../utils/SweetAlert";
 import "./addlist.scss";
+import { mediaUrl } from "../utils/mediaUrl";
 
 function Addlist3({ prevStep, thirdForm, allValues, id }) {
   const navigate = useNavigate();
@@ -208,7 +209,7 @@ function Addlist3({ prevStep, thirdForm, allValues, id }) {
                     >
                       <path
                         d="M1 1H118"
-                        stroke="#004AAD"
+                        stroke="#004aad"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
@@ -309,8 +310,7 @@ function Addlist3({ prevStep, thirdForm, allValues, id }) {
                                             muted
                                             src={
                                               file
-                                                ? import.meta.env.VITE_API_URL +
-                                                  `/getImg/${file}`
+                                                ? mediaUrl(file)
                                                 : "/static_image.jpg"
                                             }
                                             width="100px"
@@ -325,8 +325,7 @@ function Addlist3({ prevStep, thirdForm, allValues, id }) {
                                             className="img-fluid2"
                                             src={
                                               file
-                                                ? import.meta.env.VITE_API_URL +
-                                                  `/getImg/${file}`
+                                                ? mediaUrl(file)
                                                 : "/static_image.jpg"
                                             }
                                             width="100px"

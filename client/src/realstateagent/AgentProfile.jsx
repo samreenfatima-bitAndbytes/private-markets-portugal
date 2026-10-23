@@ -26,6 +26,7 @@ import { login } from "../redux/features/authSlice";
 import { customerEditProfile } from "../services/Services";
 import { countryCode } from "../utils/CountryCode";
 import { postalCodePattern, restrictAlpha } from "../utils/Functions";
+import { mediaUrl } from "../utils/mediaUrl";
 
 const AgentProfile = () => {
   const { t } = useTranslation();
@@ -183,7 +184,7 @@ const AgentProfile = () => {
                     >
                       <path
                         d="M1 1H118"
-                        stroke="#004AAD"
+                        stroke="#004aad"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
@@ -205,7 +206,7 @@ const AgentProfile = () => {
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <rect width="42" height="42" rx="6" fill="#004AAD" />
+                        <rect width="42" height="42" rx="6" fill="#004aad" />
                         <g clipPath="url(#clip0_119_1046)">
                           <path
                             d="M23.7335 15.1912L13.2795 25.646C13.2269 25.6987 13.1889 25.7653 13.1708 25.8369L12.0121 30.4878C11.9774 30.6278 12.0185 30.7767 12.1207 30.8789C12.198 30.9562 12.3034 30.999 12.4111 30.999C12.4441 30.999 12.4779 30.9949 12.5107 30.9866L17.1616 29.8278C17.2341 29.8097 17.3 29.7719 17.3526 29.7193L27.8076 19.2652L23.7335 15.1912Z"
@@ -240,8 +241,7 @@ const AgentProfile = () => {
                             values.newPicked
                               ? URL.createObjectURL(values.newPicked)
                               : values.profileImg
-                              ? import.meta.env.VITE_API_URL +
-                                `/getImg/${values?.profileImg}`
+                              ? mediaUrl(values?.profileImg)
                               : "/default.png"
                           }
                           className="profile-pic"
@@ -260,7 +260,7 @@ const AgentProfile = () => {
                               cy="17.5"
                               r="16.5"
                               fill="white"
-                              stroke="#004AAD"
+                              stroke="#004aad"
                               strokeWidth="2"
                             />
                             <g clipPath="url(#clip0_119_1485)">
@@ -547,15 +547,14 @@ const AgentProfile = () => {
                         <img
                           src={
                             data?.profileImgId
-                              ? import.meta.env.VITE_API_URL +
-                                `/getImg/${data?.profileImgId}`
+                              ? mediaUrl(data?.profileImgId)
                               : "/default.png"
                           }
                           alt="Profile"
                         />
                       </div>
                     </Col>
-                    <Col lg={9} md={8}>
+                    <Col lg={9} md={8} className="min-w-0">
                       <div className="profile-data">
                         <h3 className="mb-0">
                           {data?.firstName} {data?.lastName}
@@ -571,7 +570,7 @@ const AgentProfile = () => {
                             >
                               <path
                                 d="M1 1H178"
-                                stroke="#004AAD"
+                                stroke="#004aad"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                               />

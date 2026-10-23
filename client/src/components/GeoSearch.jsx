@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { geoSearch } from "../services/Services";
 
 const emptySuggestions = () => ({
   districts: [],
@@ -18,7 +18,6 @@ const CustomAutocomplete = ({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [searched, setSearched] = useState(false);
-  const apiUrl = `${import.meta.env.VITE_API_URL}/geosearch`;
   const latestQuery = useRef(query);
   const rootRef = useRef(null);
   const requestId = useRef(0);
@@ -43,13 +42,8 @@ const CustomAutocomplete = ({
       setSearched(false);
 
       try {
-        // Location suggestions are independent of property-type filter —
-        // type is applied when the user clicks Search.
-        const response = await axios.get(apiUrl, {
-          params: { query: latestQuery.current },
-        });
+        const data = await geoSearch(latestQuery.current);
         if (id !== requestId.current) return;
-        const data = response.data || emptySuggestions();
         setSuggestions({
           districts: data.districts || [],
           municipalities: data.municipalities || [],
@@ -64,14 +58,13 @@ const CustomAutocomplete = ({
         setSearched(true);
         setOpen(true);
       } finally {
-        if (id === requestId.current) {
-          setLoading(false);
-        }
+        if (id !== requestId.current) return;
+        setLoading(false);
       }
     }, 280);
 
     return () => clearTimeout(debounceFetch);
-  }, [query, apiUrl]);
+  }, [query]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
